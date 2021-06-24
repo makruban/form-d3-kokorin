@@ -19,6 +19,9 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameExp = RegExp(r'^[A-za-z ]+$');
   final _phoneExp = RegExp(r'^\(\d\d\d\)\-\d\d\d\-\d\d\-\d\d$');
+
+  List<String> _countries = ['Russia', 'Ukraine', 'Germany', 'USA', 'England'];
+  String _selectedCountry = '';
   @override
   void dispose() {
     _nameController.dispose();
@@ -48,10 +51,10 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Insert you name';
-                } else if(!_nameExp.hasMatch(value)){
+                } else if (!_nameExp.hasMatch(value)) {
                   return 'Enter only A-z letters';
                 } else {
-                return null;
+                  return null;
                 }
               },
               decoration: InputDecoration(
@@ -85,12 +88,13 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
               controller: _phoneController,
               keyboardType: TextInputType.phone,
               inputFormatters: [
-                FilteringTextInputFormatter(RegExp(r'^[()\d -]{1,15}$'), allow: true),
+                FilteringTextInputFormatter(RegExp(r'^[()\d -]{1,15}$'),
+                    allow: true),
               ],
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Insert you phone number';
-                } else if(!_phoneExp.hasMatch(value)){
+                } else if (!_phoneExp.hasMatch(value)) {
                   return 'Enter format is (000)-000-00-00';
                 } else {
                   return null;
@@ -122,13 +126,45 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
             SizedBox(
               height: 10.0,
             ),
+            DropdownButtonFormField(
+              validator: (value){
+                return (value == null || value == '') ? 'Select a country' : null;
+              },
+              decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(7.0)),
+                    borderSide: BorderSide(color: Colors.green, width: 2),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(7.0),
+                    ),
+                    borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                  ),
+                  prefixIcon: Icon(Icons.map),
+                  labelText: 'Select country'),
+              items: _countries.map((String country) {
+                return DropdownMenuItem<String>(
+                  child: Text(country),
+                  value: country,
+                );
+              }).toList(),
+              onChanged: (String? selectCountry) {
+                setState(() {
+                  _selectedCountry = selectCountry!;
+                });
+              },
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
             TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Insert you email address';
-                } else if(!_emailController.text.contains('@')){
+                } else if (!_emailController.text.contains('@')) {
                   return 'Format is xxx@xxx.xxx';
                 } else {
                   return null;
@@ -190,7 +226,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Insert your password';
-                } else if(_passController.text.length != 8){
+                } else if (_passController.text.length != 8) {
                   return 'Password length should be 8';
                 } else {
                   return null;
@@ -227,17 +263,17 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
               height: 10.0,
             ),
             TextFormField(
-              controller: _confirmController,,
+              controller: _confirmController,
               obscureText: _hideConfirm,
-                validator: (value) {
-      if (value == null || value.isEmpty) {
-      return 'Insert your password';
-      } else if(_passController.text != _confirmController.text){
-      return 'Check yourself';
-      } else {
-      return null;
-      }
-      },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Insert your password';
+                } else if (_passController.text != _confirmController.text) {
+                  return 'Check yourself';
+                } else {
+                  return null;
+                }
+              },
               decoration: InputDecoration(
                 labelText: 'Confirm Password *',
                 hintText: 'Confirm',
@@ -271,8 +307,10 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
               style: TextButton.styleFrom(
                   primary: Colors.white, backgroundColor: Colors.green),
               child: Text(
-                'Submit Form',
-                style: TextStyle(),
+                'Submit',
+                style: TextStyle(
+                  fontSize: 20.0,
+                ),
               ),
             ),
           ],
@@ -285,10 +323,10 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
     if (_formKey.currentState!.validate()) {
       print('form is valid');
       print('Name: ${_nameController.text}');
-      print('Name: ${_phoneController.text}');
-      print('Name: ${_emailController.text}');
-      print('Name: ${_storyController.text}');
+      print('Phone: ${_phoneController.text}');
+      print('Email: ${_emailController.text}');
+      print('Story: ${_storyController.text}');
+      print('Country: $_selectedCountry');
     }
   }
-
 }
